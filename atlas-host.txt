@@ -1,0 +1,6 @@
+mongoimport --host cluster0-shard-00-02.rctsh.mongodb.net:27017 --db blogapp --collection articles --type json --file articles.json --jsonArray --authenticationDatabase admin --ssl --username user_1
+
+
+//////////////////
+mongosh "mongodb+srv://cluster0.rctsh.mongodb.net/myFirstDatabase" --username <username>
+mongodb+srv://user2@cluster0.rctsh.mongodb.net
