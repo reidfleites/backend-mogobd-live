@@ -1,5 +1,5 @@
 import express from "express";
-import { MongoClient } from "mongodb";
+import mongodb,{ MongoClient } from "mongodb";
 import dotenv from 'dotenv';
 import cors from 'cors';
 
@@ -8,18 +8,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3100;
 const mongoConnectString = process.env.MONGO_URI;
 const client = new MongoClient(mongoConnectString);
 
-const getData = async (done) => {
+const execMongo = async (done) => {
   await client.connect();
   const db = client.db("api001");
   done(db);
 };
 
 app.get("/", (req, res) => {
-  getData(async (db) => {
+  execMongo(async (db) => {
     const users = await db
       .collection("users100")
       .find()
@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
 });
 app.delete('/deleteuser/:id', (req, res) => {
 	const id = req.params.id;
+    console.log(id);
 	execMongo(async (db) => {
 		const deleteResult = await db.collection('users100').deleteOne({ _id: new mongodb.ObjectId(id) });
 		res.json({

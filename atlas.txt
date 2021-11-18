@@ -1,2 +1,3 @@
 mongosh "mongodb+srv://cluster0.rctsh.mongodb.net/myFirstDatabase" --username <username>
 mongoimport --host cluster0-shard-00-01.ogshn.mongodb.net:27017 --db blogapp --collection articles --type json --file articles.json --jsonArray --authenticationDatabase admin --ssl --username mainuser
+mongoimport --host cluster0-shard-00-01.rctsh.mongodb.net:27017 --db api001 --collection users100 --type json --file users100.json --jsonArray --authenticationDatabase admin --ssl --username user2
