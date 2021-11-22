@@ -1,5 +1,5 @@
 import express from "express";
-import mongodb,{ MongoClient } from "mongodb";
+import mongoose from "mongoose";
 import dotenv from 'dotenv';
 import cors from 'cors';
 
@@ -10,14 +10,26 @@ app.use(express.json());
 
 const port = process.env.PORT || 3100;
 const mongoConnectString = process.env.MONGO_URI;
-const client = new MongoClient(mongoConnectString);
 
+//const client = new MongoClient(mongoConnectString);
+mongoose.connect(mongoConnectString,(err)=>{
+	if(err){
+		console.log("error to connect");
+	}
+	else{
+		console.log("connection open");
+	
+		
+	}
+});
+/*
 const execMongo = async (done) => {
   await client.connect();
   const db = client.db("api001");
   done(db);
 };
-
+*/
+/*
 app.get("/", (req, res) => {
   execMongo(async (db) => {
     const users = await db
@@ -32,6 +44,23 @@ app.get("/", (req, res) => {
     res.json(users);
   });
 });
+*/
+const userSchema = mongoose.Schema({
+	name: String,
+	username: String,
+	email: String
+});
+const UserModel = mongoose.model("User", userSchema,"users100");
+
+
+app.get("/",async(req,res)=>{
+	const users=await UserModel.find({});
+	res.json(users)
+		
+	});
+
+/////////////////////////////////////////////////////////
+/*
 app.delete('/deleteuser/:id', (req, res) => {
 	const id = req.params.id;
     console.log(id);
@@ -42,7 +71,17 @@ app.delete('/deleteuser/:id', (req, res) => {
 		})
 	});
 });
+*/
+/////////////////////////////////////////////////////////
 
+app.delete("/deleteuser/:id",async(req,res)=>{
+	
+	const ObjectId=mongoose.Types.ObjectId;
+	const id=req.params.id;
+	const result =await UserModel.deleteOne({_id:ObjectId(id)})
+	res.json({message:result})
+})
+/*
 app.post('/adduser', (req, res) => {
 	const user = req.body.user;
 	execMongo(async (db) => {
@@ -52,7 +91,26 @@ app.post('/adduser', (req, res) => {
 		});
 	});
 });
+*/
+//////////////////////////////////////////
+app.post('/adduser',async(req,res)=>{
+	console.log(req.params.body)
+	const user= new UserModel({
+		name:req.body.name,
+		username:req.body.username,
+		email:req.body.email
+	});
+	user.save(err=>{
+		if(err){
+			res.json({error:"can not add user"})
+		}
+		else{
+			res.json({message:"user added"})
+		}
+	})
+})
 
+/*
 app.patch('/edituser/:id', (req, res) => {
 	const id = req.params.id;
 	const email = req.body.email;
@@ -64,7 +122,15 @@ app.patch('/edituser/:id', (req, res) => {
 		})
 	});
 });
-
+*/
+//////////////////////////////////////
+app.patch('/edituser/:id',async(req,res)=>{
+	const ObjectId=mongoose.Types.ObjectId;
+	const id=req.params.id;
+	const email=req.body.email;
+	const deleted=await UserModel.findByIdAndUpdate({_id:ObjectId(id)},{$set:{email:email}})
+	res.json({mesagge:deleted})
+})
 
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
