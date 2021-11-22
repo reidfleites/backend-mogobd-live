@@ -94,11 +94,10 @@ app.post('/adduser', (req, res) => {
 */
 //////////////////////////////////////////
 app.post('/adduser',async(req,res)=>{
-	console.log(req.params.body)
-	const user= new UserModel({
-		name:req.body.name,
-		username:req.body.username,
-		email:req.body.email
+		const user= new UserModel({
+		name:req.body.user.name,
+		username:req.body.user.username,
+		email:req.body.user.email
 	});
 	user.save(err=>{
 		if(err){
